@@ -217,7 +217,12 @@ fn snake_growth(
 }
 
 fn size_scaling(windows: Res<Windows>, mut q: Query<(&Size, &mut Transform)>) {
-    let window = windows.get_primary().unwrap();
+    let window = match windows.get_primary() {
+        Some(w) => w,
+        None => {
+            return;
+        }
+    };
     for (sprite_size, mut transform) in q.iter_mut() {
         transform.scale = Vec3::new(
             sprite_size.width / ARENA_WIDTH as f32 * window.width() as f32,
@@ -232,7 +237,12 @@ fn position_translation(windows: Res<Windows>, mut q: Query<(&Position, &mut Tra
         let tile_size = bound_window / bound_game;
         pos / bound_game * bound_window - (bound_window / 2.) + (tile_size / 2.)
     }
-    let window = windows.get_primary().unwrap();
+    let window = match windows.get_primary() {
+        Some(w) => w,
+        None => {
+            return;
+        }
+    };
     for (pos, mut transform) in q.iter_mut() {
         transform.translation = Vec3::new(
             convert(pos.x as f32, window.width() as f32, ARENA_WIDTH as f32),
